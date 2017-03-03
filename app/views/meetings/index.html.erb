@@ -1,14 +1,66 @@
+<div ng-app="app">
+{{ 2 + 2 }}
+  <div ng-controller="meetingsCtrl" ng-init="setup()">
 <a href="/meetings/new">Create a new Meeting</a>
+  <button>Create a new meeting</button>
+  <form>
+  <div>
+    <label>Name:</label>
+    <input type="text" ng-model="newMeetingName">
+  </div>
+  <div>
+    <label>Address:</label>
+    <input type="text" ng-model="newMeetingAddress">
+  </div>
+  <div>
+    <label>Start Time:</label>
+    <input type="datetime-local" ng-model="newMeetingStartTime">
+  </div>
+  <div>
+    <label>End Time:</label>
+    <input type="datetime-local" ng-model="newMeetingEndTime">
+  </div>
+  <div>
+    <label>Notes:</label>
+    <input size="30x10" ng-model="newMeetingNotes">
+  </div>
+  <div>
+    <select ng-model="newMeetingTags" multiple="true">
+      <option ng-repeat="tag in tags" value="{{ tag.id }}">{{ tag.name }}</option>
+    </select>
+  </div>
+  <button ng-click="createMeeting(
+                                  newMeetingName,
+                                  newMeetingAddress,
+                                  newMeetingStartTime,
+                                  newMeetingEndTime,
+                                  newMeetingNotes,
+                                  newMeetingTags
+                                  )">Create Meeting</button>
+  </form>
 <h1><a href="/meetings">All meetings</a></h1>
-<% @meetings.each do |meeting| %>
-  <h3><a href="/meetings/<%= meeting.id %>"><%= meeting.name %></a></h3>
-  <p>
-    Tags:
-    <% meeting.tags.each do |tag| %>
-      <a href="/meetings?tag=<%= tag.name %>"><%= tag.name %></a>  
-    <% end %>
-  </p>
-  <p>Address: <%= meeting.address %></p>
-  <p>Start time: <%= meeting.start_time %></p>
-  <p>End time: <%= meeting.end_time %></p>
-<% end %>
+    Search by Meeting:<input type="text" ng-model="nameFilter" list="meetings">
+    <div>
+    <button ng-click="toggleSortAttribute('startTime')">Sort by Date</button>
+    <div>
+<datalist id="meetings">
+  <option ng-repeat="meeting in meetings">{{meeting.name}}</option>
+</datalist>
+
+
+    <div ng-repeat="meeting in meetings | filter: {name: nameFilter} | orderBy:sortAttribute:descending ">
+
+      <h3><a href="/meetings/{{ meeting.id }}">{{ meeting.name }}</a></h3>
+      <p>
+        Tags:
+          <a ng-repeat="tag in meeting.tags" href="/meetings?tag={{ tag.name }}">{{ tag.name }}</a>  
+      </p>
+    
+      <p>Address: {{ meeting.address }}</p>
+      <p>Start time: {{ meeting.startTime }}</p>
+      <p>End time: {{ meeting.endTime }}</p>
+    </div>
+  </div>
+</div>
+
+
